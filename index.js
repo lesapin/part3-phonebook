@@ -1,7 +1,16 @@
 const express = require('express')
-const app = express()
+const morgan = require('morgan')
 
+const app = express()
 app.use(express.json())
+
+// custom token to extract body into a string
+morgan.token('body', function (req, res) { 
+    return JSON.stringify(req.body)
+})
+
+// tokens used by tiny preset + the json request body
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 const PORT = 3001
 
@@ -28,6 +37,10 @@ let phonebook =
             "number": "39-23-6423122"
         }
     ]
+
+const logFunction = (tokens, req, res) => {
+
+}
 
 app.get('/', (request, response) => {
     response.send('<h1>Hello, world!</h1>')
