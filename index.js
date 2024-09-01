@@ -1,19 +1,19 @@
 const express = require('express')
 const morgan = require('morgan')
-
-const app = express()
+const cors = require('cors')
 
 // custom token to extract request body into a string
 morgan.token('body', function (req, res) { 
     return JSON.stringify(req.body)
 })
 
+const app = express()
+
 // tokens used by tiny preset + the json request body
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
-
 app.use(express.json())
-
-const PORT = 3001
+app.use(cors())
+app.use(express.static('dist'))
 
 let phonebook = 
     [
@@ -100,6 +100,12 @@ app.post('/api/persons/', (request, response) => {
     response.json(entry)
 })
 
+const unknownEndpoint = (req, res) =>
+    res.status(404).send({ error: 'unknown endpoint' })
+
+app.use(unknownEndpoint)
+
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
     console.log(`server running on port ${PORT}`)
 })
