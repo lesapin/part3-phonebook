@@ -13,9 +13,24 @@ mongoose.connect(database)
         console.log('error connecting to MongoDB', error.message)
     })
 
+const numberValidator = (val) => {
+    return /(^\d{2,3}-)\d+$/gm.test(val) 
+}
+
+const numberError = [ numberValidator, 'malformatted phone number' ]
+
 const personSchema = new mongoose.Schema({
-    name: String,
-    number: String
+    name: {
+        type: String,
+        minLength: 5,
+        required: true
+    },
+    number: {
+        type: String,
+        minLength: 8,
+        validate: numberError,
+        required: [true, 'Phone number required']
+    }
 })
 
 personSchema.set('toJSON', {

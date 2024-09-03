@@ -49,14 +49,23 @@ const App = () => {
                     .post(contact)
                     .then(response => {
                         setPersons(persons.concat(response))
+                        setMessage({ 
+                            content: `Added ${newName}`, 
+                            style: { color: 'green' }
+                        })
+                        setTimeout(() => {
+                            setMessage({ content: null, style: {}})
+                        }, 2000)
                     })
-                setMessage({ 
-                    content: `Added ${newName}`, 
-                    style: { color: 'green' }
-                })
-                setTimeout(() => {
-                    setMessage({ content: null, style: {}})
-                }, 2000)
+                    .catch(error => {
+                        setMessage({ 
+                            content: error.response.data.error, 
+                            style: { color: 'red' }
+                        })
+                        setTimeout(() => {
+                            setMessage({ content: null, style: {}})
+                        }, 2000)
+                    })
             } else if (newName !== '' && newNumber !== '') {
                 if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
                     contactService
@@ -66,7 +75,7 @@ const App = () => {
                         })
                         .catch(error => {
                             setMessage({ 
-                                content: `Information of ${newName} has already been removed from server`, 
+                                content: error.response.data.error, 
                                 style: { color: 'red' }
                             })
                             setTimeout(() => {
